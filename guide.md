@@ -17,7 +17,7 @@
 - `cd check-0.15.2`
 
 6. просто выполняйте по порядку (может занять много времени): 
-- `autoconf --install`
+- `autoreconf --install`
 - `./configure`
 - `make`
 - `make check`
