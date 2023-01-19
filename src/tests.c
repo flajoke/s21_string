@@ -8,23 +8,23 @@
 
 #define CHECK(func) ck_assert(s21_##func == func) 
 
-
 enum test_specific_value {
-    MESSAGES_COUNT = 133,
     SIZE = 24,
     HALF = SIZE / 2,
 };
 
+#if 0
 START_TEST(MEMCHR) {
     const char haystack[SIZE] = "........o...........x...";
 
     CHECK(memchr(haystack, 'o', SIZE / 2));
 
-
     CHECK(memchr(haystack, 'x', SIZE / 2));
     CHECK(memchr(haystack, 'x', SIZE));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(MEMCMP)
 {
     const char string[SIZE] = "............oooooooooooo";
@@ -39,7 +39,9 @@ START_TEST(MEMCMP)
 
     CHECK(memcmp(string, string, 0));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(MEMCPY)
 {
     {
@@ -80,7 +82,9 @@ START_TEST(MEMCPY)
     }
 
 } END_TEST
+#endif
 
+#if 0
 START_TEST(MEMMOVE)
 {
     {
@@ -120,7 +124,9 @@ START_TEST(MEMMOVE)
         ck_assert_mem_eq(std, s21, SIZE);
     }
 } END_TEST
+#endif
 
+#if 0
 START_TEST(MEMSET)
 {
     char s21[SIZE] = "........................";
@@ -135,7 +141,9 @@ START_TEST(MEMSET)
     char src[SIZE] = "........................";
     CHECK(memset(src, 'o', SIZE));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRCAT)
 {
     char dest[HALF] = "......";
@@ -172,7 +180,9 @@ START_TEST(STRCAT)
         ck_assert_str_eq(s21, std);
     }
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRNCAT)
 {
     char dest[HALF + 1] = "......";
@@ -209,7 +219,9 @@ START_TEST(STRNCAT)
         ck_assert_str_eq(s21, std);
     }
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRCHR)
 {
     const char haystack[HALF] = "..o....o....";
@@ -218,7 +230,9 @@ START_TEST(STRCHR)
     CHECK(strchr(haystack, 'x'));
     CHECK(strchr(haystack, '\0'));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRCMP)
 {
     const char string[SIZE] = "............oooooooooooo";
@@ -227,7 +241,9 @@ START_TEST(STRCMP)
     CHECK(strcmp(string, string));
     CHECK(strcmp(string, &string[HALF - 1]));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRNCMP)
 {
     const char string[SIZE] = "............oooooooooooo";
@@ -242,7 +258,9 @@ START_TEST(STRNCMP)
 
     CHECK(strncmp(string, string, 0));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRCPY)
 {
     {
@@ -260,7 +278,9 @@ START_TEST(STRCPY)
         CHECK(strcpy(dest, src));
     }
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRNCPY)
 {
     {
@@ -315,7 +335,9 @@ START_TEST(STRNCPY)
     }
 
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRCSPN)
 {
     char string[SIZE] = ".....a...o..............";
@@ -325,14 +347,18 @@ START_TEST(STRCSPN)
 
     CHECK(strcspn(string, "ao"));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRLEN)
 {
     char string[SIZE] = "........................";
 
     CHECK(strlen(string));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRPBRK)
 {
     char string[SIZE] = ".......o...a............";
@@ -343,7 +369,9 @@ START_TEST(STRPBRK)
     CHECK(strpbrk(string, "xoa"));
     CHECK(strpbrk(string, "x"));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRRCHR)
 {
     const char haystack[HALF] = "..o....o....";
@@ -352,7 +380,9 @@ START_TEST(STRRCHR)
     CHECK(strrchr(haystack, 'x'));
     CHECK(strrchr(haystack, '\0'));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRSPN)
 {
     char string[SIZE] = ".....a...o..............";
@@ -362,7 +392,9 @@ START_TEST(STRSPN)
 
     CHECK(strcspn(string, ".a"));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRSTR)
 {
     char string[SIZE] = ".......oooo..oooo...oooo";
@@ -374,23 +406,37 @@ START_TEST(STRSTR)
     CHECK(strcspn(string, "ooo"));
     CHECK(strcspn(string, "xxx"));
 } END_TEST
+#endif
 
+#if 0
 START_TEST(STRTOK)
 {
-    char string[SIZE] = ".token.token.token.";
+    char string[SIZE] = "token.token.token";
     
-    CHECK(strtok(string, "."));
-    CHECK(strtok(string, "x"));
-} END_TEST
+    CHECK(strtok("token.token.token", "."));
+    CHECK(strtok("token.token.token", "x"));
 
+    char extd_string[SIZE] = ".token.token.token.";
+    CHECK(strtok("token.token.token", "."));
+
+} END_TEST
+#endif
+
+#if 1
 START_TEST(STRERROR) {
-    for (int error = 0; error < MESSAGES_COUNT; ++error)
+    for (int error = 0; error < 256; ++error)
     {
         ck_assert_str_eq(s21_strerror(error), strerror(error));
     }
-} END_TEST
+    for (int error = 0; error > -256; --error)
+    {
+        ck_assert_str_eq(s21_strerror(error), strerror(error));
+    }
 
-static const TTest **test[TESTS_COUNT] = {
+} END_TEST
+#endif
+
+static const TTest **test[] = {
     &STRERROR,
 };
 

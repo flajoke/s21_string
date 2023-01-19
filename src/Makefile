@@ -40,7 +40,7 @@ PATH:=$(PATH):$(BREW)/bin
 TEST = check_test
 TEST_SRC = tests.c
 TEST_OJB = $(TEST_SRC:%.c=%.o)
-TEST_LIBS =-lcheck -lm -lpthread -lrt -lsubunit
+TEST_LIBS =-lcheck -lm -lpthread 
 
 # --------{COLORED OUTPUT}------------------------------------
 
