@@ -8,13 +8,13 @@
 
 #define CHECK(func) ck_assert(s21_##func == func) 
 
-
 enum test_specific_value {
-    MESSAGES_COUNT = 133,
     SIZE = 24,
     HALF = SIZE / 2,
 };
+
 #if 0
+
 START_TEST(MEMCHR) {
     const char haystack[SIZE] = "........o...........x...";
 
