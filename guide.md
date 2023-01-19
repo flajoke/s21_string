@@ -7,11 +7,7 @@
 `sudo apt purge check`
 
 3. устанавливаем все зависимости:
-`sudo apt install automake`
-`sudo apt install autoconf`
-`sudo apt install libtool` 
-`sudo apt install pkg-config`
-`sudo apt install texinfo`
+`sudo apt install automake autoconf libtool pkg-config texinfo`
 
 4. достаем исходники:
 `curl --location --output CHECK.tar.gz https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz`
