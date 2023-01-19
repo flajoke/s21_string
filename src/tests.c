@@ -386,11 +386,17 @@ START_TEST(STRTOK)
 
 } END_TEST
 #endif
+
 START_TEST(STRERROR) {
-    for (int error = 0; error < MESSAGES_COUNT; ++error)
+    for (int error = 0; error < 256; ++error)
     {
         ck_assert_str_eq(s21_strerror(error), strerror(error));
     }
+    for (int error = 0; error > -256; --error)
+    {
+        ck_assert_str_eq(s21_strerror(error), strerror(error));
+    }
+
 } END_TEST
 
 static const TTest **test[TESTS_COUNT] = {
