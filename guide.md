@@ -1,28 +1,28 @@
 # Как установить libcheck:
 1. обновляем софт чтобы не было никаких странностей:
-`sudo apt update`
-`sudo apt upgrade`
+- `sudo apt update`
+- `sudo apt upgrade`
 
 2. вычищаем старый "check" чтобы линкер искал новый:
-`sudo apt purge check`
+- `sudo apt purge check`
 
 3. устанавливаем все зависимости:
-`sudo apt install automake autoconf libtool pkg-config texinfo`
+- `sudo apt install automake autoconf libtool pkg-config texinfo`
 
 4. достаем исходники:
-`curl --location --output CHECK.tar.gz https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz`
-`tar --extract --verbose --ungzip --file CHECK.tar.gz`
+- `curl --location --output CHECK.tar.gz https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz`
+- `tar --extract --verbose --ungzip --file CHECK.tar.gz`
 
 5. переходим в новую, распокованную директорию:
-`cd check-0.15.2`
+- `cd check-0.15.2`
 
 6. просто выполняйте по порядку (может занять много времени): 
-`autoconf --install`
-`./configure`
-`make`
-`make check`
-`make install`
-`sudo ldconfig`
+- `autoconf --install`
+- `./configure`
+- `make`
+- `make check`
+- `make install`
+- `sudo ldconfig`
 
 # Как пользоваться моим вонючим Makefile-ом:
 
