@@ -19,6 +19,17 @@
 6. просто выполняйте по порядку (может занять много времени): 
 - `autoreconf --install`
 - `./configure`
+> убедитесь что вывод после `./configure` выглядит вот так:
+==========================================
+Summary of Check 0.15.2 options:
+fork mode ............................ yes
+high resolution timer replacement .... no
+snprintf replacement ................. no
+subunit support....................... yes
+timeout unit tests ................... yes
+POSIX regular expressions ............ yes
+build docs ........................... yes
+==========================================
 - `make`
 - `make check`
 - `make install`
