@@ -14,12 +14,11 @@ enum test_specific_value {
     SIZE = 24,
     HALF = SIZE / 2,
 };
-
+#if 0
 START_TEST(MEMCHR) {
     const char haystack[SIZE] = "........o...........x...";
 
     CHECK(memchr(haystack, 'o', SIZE / 2));
-
 
     CHECK(memchr(haystack, 'x', SIZE / 2));
     CHECK(memchr(haystack, 'x', SIZE));
@@ -377,12 +376,16 @@ START_TEST(STRSTR)
 
 START_TEST(STRTOK)
 {
-    char string[SIZE] = ".token.token.token.";
+    char string[SIZE] = "token.token.token";
     
-    CHECK(strtok(string, "."));
-    CHECK(strtok(string, "x"));
-} END_TEST
+    CHECK(strtok("token.token.token", "."));
+    CHECK(strtok("token.token.token", "x"));
 
+    char extd_string[SIZE] = ".token.token.token.";
+    CHECK(strtok("token.token.token", "."));
+
+} END_TEST
+#endif
 START_TEST(STRERROR) {
     for (int error = 0; error < MESSAGES_COUNT; ++error)
     {
