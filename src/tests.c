@@ -4,7 +4,7 @@
 
 #include "s21_string.h"
 
-#define TESTS_COUNT 1
+#define TESTS_COUNT 2
 
 #define CHECK(func) ck_assert(s21_##func == func) 
 
@@ -15,7 +15,7 @@ enum test_specific_value {
 
 #if 0
 START_TEST(MEMCHR) {
-    const char haystack[SIZE] = "........o...........x...";
+    const char haystack[SIZE] = "........o...........x..\n";
 
     CHECK(memchr(haystack, 'o', SIZE / 2));
 
@@ -27,8 +27,8 @@ START_TEST(MEMCHR) {
 #if 0
 START_TEST(MEMCMP)
 {
-    const char string[SIZE] = "............oooooooooooo";
-    const char  other[SIZE] = "............oooooooooooo";
+    const char string[SIZE] = "............ooooooooooo\0";
+    const char  other[SIZE] = "............ooooooooooo\0";
 
     CHECK(memcmp(string, string, HALF));
     CHECK(memcmp(string, &string[HALF - 1], HALF));
@@ -45,23 +45,23 @@ START_TEST(MEMCMP)
 START_TEST(MEMCPY)
 {
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         s21_memcpy(dest, src, SIZE);
         ck_assert_mem_eq(dest, src, SIZE);
     }
      
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         CHECK(memcpy(dest, src, SIZE));
     }
 
     {
-        char  s21[SIZE] = ".ooooooooooooooooooooooo";
-        char  std[SIZE] = ".ooooooooooooooooooooooo";
+        char  s21[SIZE] = ".oooooooooooooooooooooo\0";
+        char  std[SIZE] = ".oooooooooooooooooooooo\0";
 
         s21_memcpy(s21 + 1, s21, SIZE - 1);
         memcpy(std + 1, std, SIZE - 1);
@@ -71,8 +71,8 @@ START_TEST(MEMCPY)
     }
 
     {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
+        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
 
         s21_memcpy(s21, s21 + 1, SIZE - 1);
         memcpy(std, std + 1, SIZE - 1);
@@ -88,23 +88,23 @@ START_TEST(MEMCPY)
 START_TEST(MEMMOVE)
 {
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         s21_memmove(dest, src, SIZE);
         ck_assert_mem_eq(dest, src, SIZE);
     }
      
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         CHECK(memmove(dest, src, SIZE));
     }
 
     {
-        char  s21[SIZE] = ".ooooooooooooooooooooooo";
-        char  std[SIZE] = ".ooooooooooooooooooooooo";
+        char  s21[SIZE] = ".oooooooooooooooooooooo\0";
+        char  std[SIZE] = ".oooooooooooooooooooooo\0";
 
         s21_memmove(s21 + 1, s21, SIZE - 1);
         memmove(std + 1, std, SIZE - 1);
@@ -114,8 +114,8 @@ START_TEST(MEMMOVE)
     }
 
     {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
+        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
 
         s21_memmove(s21, s21 + 1, SIZE - 1);
         memmove(std, std + 1, SIZE - 1);
@@ -129,8 +129,8 @@ START_TEST(MEMMOVE)
 #if 0
 START_TEST(MEMSET)
 {
-    char s21[SIZE] = "........................";
-    char std[SIZE] = "........................";
+    char s21[SIZE] = ".......................\0";
+    char std[SIZE] = ".......................\0";
 
 
     s21_memset(s21, 'o', SIZE);
@@ -138,7 +138,7 @@ START_TEST(MEMSET)
 
     ck_assert_mem_eq(s21, std, SIZE);
 
-    char src[SIZE] = "........................";
+    char src[SIZE] = ".......................\0";
     CHECK(memset(src, 'o', SIZE));
 } END_TEST
 #endif
@@ -146,13 +146,13 @@ START_TEST(MEMSET)
 #if 0
 START_TEST(STRCAT)
 {
-    char dest[HALF] = "......";
+    char dest[HALF] = "......\0";
 
     CHECK(strcat(dest, "oooooo"));
 
     {
-        char s21[HALF] = "....";
-        char std[HALF] = "....";
+        char s21[HALF] = "....\0";
+        char std[HALF] = "....\0";
 
         s21_strcat(s21, "oooo");
         strcat(s21, "oooo"); 
@@ -161,8 +161,8 @@ START_TEST(STRCAT)
     }
 
     {
-        char s21[HALF] = "......";
-        char std[HALF] = "......";
+        char s21[HALF] = "......\0";
+        char std[HALF] = "......\0";
 
         s21_strcat(s21, "oooooo");
         strcat(s21, "oooooo");
@@ -171,27 +171,28 @@ START_TEST(STRCAT)
     }
 
     {
-        char s21[HALF - 1] = "......";
-        char std[HALF - 1] = "......";
+        char s21[HALF - 1] = "......\0";
+        char std[HALF - 1] = "......\0";
 
         s21_strcat(s21, "oooooo");
         strcat(s21, "oooooo");
 
         ck_assert_str_eq(s21, std);
     }
+
 } END_TEST
 #endif
 
 #if 0
 START_TEST(STRNCAT)
 {
-    char dest[HALF + 1] = "......";
+    char dest[HALF + 1] = "......\0";
 
     CHECK(strncat(dest, "oooooo", HALF));
 
     {
-        char s21[HALF + 1] = "....";
-        char std[HALF + 1] = "....";
+        char s21[HALF + 1] = "....\0";
+        char std[HALF + 1] = "....\0";
 
         s21_strncat(s21, "oooo", HALF);
         strncat(s21, "oooo", HALF); 
@@ -200,8 +201,8 @@ START_TEST(STRNCAT)
     }
 
     {
-        char s21[HALF + 1] = "......";
-        char std[HALF + 1] = "......";
+        char s21[HALF + 1] = "......\0";
+        char std[HALF + 1] = "......\0";
 
         s21_strncat(s21, "oooooo", HALF);
         strncat(s21, "oooooo", HALF);
@@ -210,8 +211,8 @@ START_TEST(STRNCAT)
     }
 
     {
-        char s21[HALF] = "......";
-        char std[HALF] = "......";
+        char s21[HALF] = "......\0";
+        char std[HALF] = "......\0";
 
         s21_strncat(s21, "oooooo", HALF - 1);
         strncat(s21, "oooooo", HALF - 1);
@@ -224,7 +225,7 @@ START_TEST(STRNCAT)
 #if 0
 START_TEST(STRCHR)
 {
-    const char haystack[HALF] = "..o....o....";
+    const char haystack[HALF] = "..o....o....\0";
 
     CHECK(strchr(haystack, 'o'));
     CHECK(strchr(haystack, 'x'));
@@ -235,8 +236,8 @@ START_TEST(STRCHR)
 #if 0
 START_TEST(STRCMP)
 {
-    const char string[SIZE] = "............oooooooooooo";
-    const char  other[SIZE] = "............oooooooooooo";
+    const char string[SIZE] = "............ooooooooooo\0";
+    const char  other[SIZE] = "............ooooooooooo\0";
 
     CHECK(strcmp(string, string));
     CHECK(strcmp(string, &string[HALF - 1]));
@@ -246,8 +247,8 @@ START_TEST(STRCMP)
 #if 0
 START_TEST(STRNCMP)
 {
-    const char string[SIZE] = "............oooooooooooo";
-    const char  other[SIZE] = "............oooooooooooo";
+    const char string[SIZE] = "............ooooooooooo\0";
+    const char  other[SIZE] = "............ooooooooooo\0";
 
     CHECK(strncmp(string, string, HALF));
     CHECK(strncmp(string, &string[HALF - 1], HALF));
@@ -260,20 +261,20 @@ START_TEST(STRNCMP)
 } END_TEST
 #endif
 
-#if 0
+#if 1
 START_TEST(STRCPY)
 {
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         s21_strcpy(dest, src);
         ck_assert_str_eq(dest, src);
     }
      
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         CHECK(strcpy(dest, src));
     }
@@ -284,23 +285,23 @@ START_TEST(STRCPY)
 START_TEST(STRNCPY)
 {
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         s21_strncpy(dest, src, SIZE);
         ck_assert_str_eq(dest, src);
     }
      
     {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+        char  src[SIZE] = "ooooooooooooooooooooooo\0";
+        char dest[SIZE] = ".......................\0";
 
         CHECK(strncpy(dest, src, SIZE));
     }
 
     {
-        char  s21[SIZE] = "........................";
-        char  std[SIZE] = "........................";
+        char  s21[SIZE] = ".......................\0";
+        char  std[SIZE] = ".......................\0";
 
         char  src[4] = {'o','o','o','o'};
 
@@ -313,8 +314,8 @@ START_TEST(STRNCPY)
     }
 
     {
-        char  s21[SIZE] = ".ooooooooooooooooooooooo";
-        char  std[SIZE] = ".ooooooooooooooooooooooo";
+        char  s21[SIZE] = ".oooooooooooooooooooooo\0";
+        char  std[SIZE] = ".oooooooooooooooooooooo\0";
 
         s21_strncpy(s21 + 1, s21, SIZE - 1);
         strncpy(std + 1, std, SIZE - 1);
@@ -324,8 +325,8 @@ START_TEST(STRNCPY)
     }
 
     {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
+        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
 
         s21_strncpy(s21, s21 + 1, SIZE - 1);
         strncpy(std, std + 1, SIZE - 1);
@@ -340,7 +341,7 @@ START_TEST(STRNCPY)
 #if 0
 START_TEST(STRCSPN)
 {
-    char string[SIZE] = ".....a...o..............";
+    char string[SIZE] = ".....a...o.............\0";
 
     CHECK(strcspn(string, "o"));
     CHECK(strcspn(string, "x"));
@@ -352,7 +353,7 @@ START_TEST(STRCSPN)
 #if 0
 START_TEST(STRLEN)
 {
-    char string[SIZE] = "........................";
+    char string[SIZE] = ".......................\0";
 
     CHECK(strlen(string));
 } END_TEST
@@ -361,7 +362,7 @@ START_TEST(STRLEN)
 #if 0
 START_TEST(STRPBRK)
 {
-    char string[SIZE] = ".......o...a............";
+    char string[SIZE] = ".......o...a...........\0";
 
     CHECK(strpbrk(string, "ao"));
     CHECK(strpbrk(string, "oa"));
@@ -374,7 +375,7 @@ START_TEST(STRPBRK)
 #if 0
 START_TEST(STRRCHR)
 {
-    const char haystack[HALF] = "..o....o....";
+    const char haystack[HALF] = "..o....o...\0";
 
     CHECK(strrchr(haystack, 'o'));
     CHECK(strrchr(haystack, 'x'));
@@ -385,7 +386,7 @@ START_TEST(STRRCHR)
 #if 0
 START_TEST(STRSPN)
 {
-    char string[SIZE] = ".....a...o..............";
+    char string[SIZE] = ".....a...o.............\0";
 
     CHECK(strcspn(string, "."));
     CHECK(strcspn(string, "x"));
@@ -397,7 +398,7 @@ START_TEST(STRSPN)
 #if 0
 START_TEST(STRSTR)
 {
-    char string[SIZE] = ".......oooo..oooo...oooo";
+    char string[SIZE] = ".......oooo..oooo...ooo\0";
 
     CHECK(strcspn(string, "oooo"));
     CHECK(strcspn(string, "oooo\0"));
@@ -411,12 +412,12 @@ START_TEST(STRSTR)
 #if 0
 START_TEST(STRTOK)
 {
-    char string[SIZE] = "token.token.token";
+    char string[SIZE] = "token.token.token\0";
     
     CHECK(strtok("token.token.token", "."));
     CHECK(strtok("token.token.token", "x"));
 
-    char extd_string[SIZE] = ".token.token.token.";
+    char extd_string[SIZE] = ".token.token.token.\n";
     CHECK(strtok("token.token.token", "."));
 
 } END_TEST
@@ -438,12 +439,12 @@ START_TEST(STRERROR) {
 
 #if 0
 START_TEST(TO_UPPER) {
-    const char * uppercase_string = "FOO";
-    const char * lowercase_string = "foo";
+    const char uppercase_string[HALF] = "FOO";
+    const char lowercase_string[HALF] = "foo";
 
     ck_assert_str_eq(s21_to_upper(lowercase_string), uppercase_string);
 
-    const char * unaffected = "0123456789`~!@#$%^&*()-=+[]{};:'\"\\|<,.>?/";
+    const char unaffected[SIZE * 2] = "0123456789`~!@#$%^&*()-=+[]{};:'\"\\|<,.>?/\0";
 
     ck_assert_str_eq(s21_to_lower(unaffected), unaffected);
 
@@ -453,12 +454,12 @@ START_TEST(TO_UPPER) {
 
 #if 0
 START_TEST(TO_LOWER) {
-    const char * uppercase_string = "FOO";
-    const char * lowercase_string = "foo";
+    const char uppercase_string[HALF] = "FOO";
+    const char lowercase_string[HALF] = "foo";
 
     ck_assert_str_eq(s21_to_lower(uppercase_string), lowercase_string);
 
-    const char * unaffected = "0123456789`~!@#$%^&*()-=+[]{};:'\"\\|<,.>?/";
+    const char unaffected[SIZE * 2] = "0123456789`~!@#$%^&*()-=+[]{};:'\"\\|<,.>?/\0";
 
     ck_assert_str_eq(s21_to_lower(unaffected), unaffected);
 
@@ -470,23 +471,23 @@ START_TEST(TO_LOWER) {
 START_TEST(INSERT) {
 
     {
-        const char * original = "............";
-        const char * modified = "...oooo.........";
+        const char original[HALF] = "............\0";
+        const char modified[HALF] = "...oooo.........\0";
 
         ck_assert_str_eq(s21_insert("ooo", original, 3), modified);
     }
 
     {
-        const char * original = "............";
-        const char * modified = "...........oooo.";
+        const char original[HALF] = "...........\0";
+        const char modified[HALF] = "...........oooo\0";
 
         ck_assert_str_eq(s21_insert("ooo", original, 11), modified);
     }
 
 
     {
-        const char * original = "............";
-        const char * modified = "............oooo";
+        const char original[HALF] = "...........\0";
+        const char modified[HALF] = "...........oooo\0";
 
         ck_assert_str_eq(s21_insert("ooo", original, 12), modified);
     }
@@ -500,19 +501,19 @@ START_TEST(INSERT) {
 #if 0
 START_TEST(TRIM) {
     {
-        const char * original = "...[ BRUH ]XXX";
-        const char * modified = "BRUH";
+        const char original[HALF] = "...[ BRUH ]XXX\0";
+        const char modified[HALF] = "BRUH\0";
 
-        const char charset[] = { '.', '[', ' ', 'X' };
+        const char charset[] = ".[X\0";
 
         ck_assert_str_eq(s21_trim(original, charset), modified);
     }
 
     {
-        const char * original = "............";
-        const char * modified = "";
+        const char original[HALF] = "...........\0";
+        const char modified[HALF] = "";
 
-        const char charset[] = { '.' };
+        const char charset[] = "x\0";
 
         ck_assert_str_eq(s21_trim(original, charset), modified);
     }
@@ -523,7 +524,7 @@ START_TEST(TRIM) {
 #endif
 
 static const TTest **test[] = {
-    &STRERROR,
+    &STRERROR, &STRCPY,
 };
 
 Suite *setup_suite(void) {
