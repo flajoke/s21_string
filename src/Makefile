@@ -18,7 +18,7 @@ CFLAGS = -Wall -g
 LIB_TOOL = ar
 LIB_FLAGS = -rcs
 
-SRC = strerror.c
+SRC = strerror.c s21_strcpy.c
 OBJ = $(SRC:%.c=%.o)
 
 CC = gcc
