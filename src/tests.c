@@ -179,7 +179,6 @@ START_TEST(STRCAT)
 
         ck_assert_str_eq(s21, std);
     }
-
 } END_TEST
 #endif
 
