@@ -4,7 +4,94 @@
 
 #include "s21_string.h"
 
-#define TESTS_COUNT 3
+#define TESTS_COUNT 4
+
+
+#if 0
+    #undef _ck_assert_mem
+    #define _ck_assert_mem(X, OP, Y, L) do { \
+      const uint8_t* _ck_x = (const uint8_t*)(X); \
+      const uint8_t* _ck_y = (const uint8_t*)(Y); \
+      size_t _ck_l = (L); \
+      char _ck_x_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
+      char _ck_y_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
+      static const char _ck_hexdigits[] = "0123456789abcdef"; \
+      size_t _ck_i; \
+      size_t _ck_maxl = (_ck_l > CK_MAX_ASSERT_MEM_PRINT_SIZE) ? CK_MAX_ASSERT_MEM_PRINT_SIZE : _ck_l; \
+      for (_ck_i = 0; _ck_i < _ck_maxl; _ck_i++) { \
+        _ck_x_str[_ck_i * 2  ]   = _ck_hexdigits[(_ck_x[_ck_i] >> 4) & 0xF]; \
+        _ck_y_str[_ck_i * 2  ]   = _ck_hexdigits[(_ck_y[_ck_i] >> 4) & 0xF]; \
+        _ck_x_str[_ck_i * 2 + 1] = _ck_hexdigits[_ck_x[_ck_i] & 0xF]; \
+        _ck_y_str[_ck_i * 2 + 1] = _ck_hexdigits[_ck_y[_ck_i] & 0xF]; \
+      } \
+      _ck_x_str[_ck_i * 2] = 0; \
+      _ck_y_str[_ck_i * 2] = 0; \
+      if (_ck_maxl != _ck_l) { \
+        _ck_x_str[_ck_i * 2 - 2] = '.'; \
+        _ck_y_str[_ck_i * 2 - 2] = '.'; \
+        _ck_x_str[_ck_i * 2 - 1] = '.'; \
+        _ck_y_str[_ck_i * 2 - 1] = '.'; \
+      } \
+      ck_assert_msg(0 OP memcmp(_ck_y, _ck_x, _ck_l), \
+        "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", #X, _ck_x_str, _ck_y_str); \
+    } while (0)
+#else
+    #undef _ck_assert_mem
+    #define _ck_assert_mem(X, OP, Y, L) do { \
+      const uint8_t* _ck_x = (const uint8_t*)(X); \
+      const uint8_t* _ck_y = (const uint8_t*)(Y); \
+      size_t _ck_l = (L); \
+      char _ck_x_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
+      char _ck_y_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
+      size_t _ck_i; \
+      size_t _ck_maxl = (_ck_l > CK_MAX_ASSERT_MEM_PRINT_SIZE) ? CK_MAX_ASSERT_MEM_PRINT_SIZE : _ck_l; \
+      for (_ck_i = 0; _ck_i < _ck_maxl; _ck_i++) { \
+        _ck_x_str[_ck_i] = _ck_x[_ck_i]; \
+        _ck_y_str[_ck_i] = _ck_y[_ck_i]; \
+      } \
+      _ck_x_str[_ck_i] = 0; \
+      _ck_y_str[_ck_i] = 0; \
+      ck_assert_msg(0 OP memcmp(_ck_y, _ck_x, _ck_l), \
+        "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", #X, _ck_x_str, _ck_y_str); \
+    } while (0)
+#endif
+
+
+
+
+
+
+#undef _ck_assert_str
+#define _ck_assert_str(X, OP, Y, NULLEQ, NULLNE) do { \
+  const char* _ck_x = (X); \
+  const char* _ck_y = (Y); \
+  const char* _ck_x_s; \
+  const char* _ck_y_s; \
+  const char* _ck_x_q; \
+  const char* _ck_y_q; \
+  if (_ck_x != NULL) { \
+    _ck_x_q = "\""; \
+    _ck_x_s = _ck_x; \
+  } else { \
+    _ck_x_q = ""; \
+    _ck_x_s = "(null)"; \
+  } \
+  if (_ck_y != NULL) { \
+    _ck_y_q = "\""; \
+    _ck_y_s = _ck_y; \
+  } else { \
+    _ck_y_q = ""; \
+    _ck_y_s = "(null)"; \
+  } \
+  ck_assert_msg( \
+    (NULLEQ && (_ck_x == NULL) && (_ck_y == NULL)) || \
+    (NULLNE && ((_ck_x == NULL) || (_ck_y == NULL)) && (_ck_x != _ck_y)) || \
+    ((_ck_x != NULL) && (_ck_y != NULL) && (0 OP strcmp(_ck_y, _ck_x))), \
+    "[1;33mAssertion [0m [33m'%s'[0m failed:\n[\n\t[32m std: == %s%s%s[0m\n\t[31m s21: == %s%s%s[0m\n]", \
+    #X, \
+    _ck_x_q, _ck_x_s, _ck_x_q, \
+    _ck_y_q, _ck_y_s, _ck_y_q); \
+} while (0)
 
 #define CHECK(func) do { \
     TYPE std = func;  \
@@ -18,15 +105,27 @@ enum test_specific_value {
     HALF = SIZE / 2,
 };
 
+/*
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+*/
+
 #if 1
 #define FTYPE "%p"
 #define TYPE void *
 START_TEST(MEMCHR) {
     const char haystack[SIZE] = "........o...........x..\n";
 
-    CHECK(memchr(haystack, 'o', SIZE / 2));
+    CHECK(memchr(haystack, 'o', HALF));
 
-    CHECK(memchr(haystack, 'x', SIZE / 2));
+    CHECK(memchr(haystack, 'x', HALF));
     CHECK(memchr(haystack, 'x', SIZE));
 } END_TEST
 #undef FTYPE
@@ -45,7 +144,7 @@ START_TEST(MEMCMP)
     CHECK(memcmp(string, &string[HALF - 1], HALF));
     CHECK(memcmp(string, string, SIZE));
 
-    CHECK(memcmp(string, other, SIZE / 2));
+    CHECK(memcmp(string, other, HALF));
     CHECK(memcmp(string, &other[HALF - 1], HALF));
 
     CHECK(memcmp(string, string, 0));
@@ -327,7 +426,7 @@ START_TEST(STRCPY)
 #undef TYPE
 #endif
 
-#if 0
+#if 1
 #define FTYPE "%s"
 #define TYPE char *
 START_TEST(STRNCPY)
@@ -338,6 +437,7 @@ START_TEST(STRNCPY)
 
         s21_strncpy(dest, src, SIZE);
         ck_assert_str_eq(dest, src);
+
     }
      
     {
@@ -353,10 +453,11 @@ START_TEST(STRNCPY)
 
         char  src[4] = {'o','o','o','o'};
 
-        const int offset = (SIZE - sizeof(src)); 
+        const size_t offset = (SIZE - sizeof(src)); 
+        const size_t slice_size = sizeof(src);
 
-        s21_strncpy(&s21[offset], src, sizeof(src));
-        strncpy(&std[offset], src, sizeof(src));
+        s21_strncpy(&s21[offset], src, slice_size);
+        strncpy(&std[offset], src, slice_size);
 
         ck_assert_mem_eq(std, s21, SIZE);
     }
@@ -365,22 +466,17 @@ START_TEST(STRNCPY)
         char  s21[SIZE] = ".oooooooooooooooooooooo\0";
         char  std[SIZE] = ".oooooooooooooooooooooo\0";
 
-        s21_strncpy(s21 + 1, s21, SIZE - 1);
-        strncpy(std + 1, std, SIZE - 1);
 
         // NOTE(pottluci): "..ooooooooooooooooooo???" 
-        ck_assert_mem_eq(std, s21, SIZE);
+        ck_assert_mem_eq(strncpy(&std[1], &std[0], SIZE - 1), s21_strncpy(s21 + 1, s21, SIZE - 1), SIZE);
     }
 
     {
         char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
         char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
 
-        s21_strncpy(s21, s21 + 1, SIZE - 1);
-        strncpy(std, std + 1, SIZE - 1);
-
         // NOTE(pottluci): "xxxxxxxxxxxxxxxxxxxxxxxx" 
-        ck_assert_mem_eq(std, s21, SIZE);
+        ck_assert_mem_eq(strncpy(&std[0], &std[1], SIZE - 1), s21_strncpy(&s21[0], &s21[1], SIZE - 1), SIZE);
     }
 
 } END_TEST
@@ -596,7 +692,7 @@ START_TEST(TRIM) {
 #endif
 
 static const TTest **test[] = {
-    &STRERROR, &STRCPY, &MEMCHR,
+    &STRERROR, &STRCPY, &STRNCPY, &MEMCHR,
 };
 
 Suite *setup_suite(void) {
