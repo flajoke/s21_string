@@ -436,6 +436,92 @@ START_TEST(STRERROR) {
 } END_TEST
 #endif
 
+#if 0
+START_TEST(TO_UPPER) {
+    const char * uppercase_string = "FOO";
+    const char * lowercase_string = "foo";
+
+    ck_assert_str_eq(s21_to_upper(lowercase_string), uppercase_string);
+
+    const char * unaffected = "0123456789`~!@#$%^&*()-=+[]{};:'\"\\|<,.>?/";
+
+    ck_assert_str_eq(s21_to_lower(unaffected), unaffected);
+
+    ck_assert_ptr_null(s21_to_upper(NULL));
+} END_TEST
+#endif
+
+#if 0
+START_TEST(TO_LOWER) {
+    const char * uppercase_string = "FOO";
+    const char * lowercase_string = "foo";
+
+    ck_assert_str_eq(s21_to_lower(uppercase_string), lowercase_string);
+
+    const char * unaffected = "0123456789`~!@#$%^&*()-=+[]{};:'\"\\|<,.>?/";
+
+    ck_assert_str_eq(s21_to_lower(unaffected), unaffected);
+
+    ck_assert_ptr_null(s21_to_lower(NULL));
+} END_TEST
+#endif
+
+#if 0
+START_TEST(INSERT) {
+
+    {
+        const char * original = "............";
+        const char * modified = "...oooo.........";
+
+        ck_assert_str_eq(s21_insert("ooo", original, 3), modified);
+    }
+
+    {
+        const char * original = "............";
+        const char * modified = "...........oooo.";
+
+        ck_assert_str_eq(s21_insert("ooo", original, 11), modified);
+    }
+
+
+    {
+        const char * original = "............";
+        const char * modified = "............oooo";
+
+        ck_assert_str_eq(s21_insert("ooo", original, 12), modified);
+    }
+
+    ck_assert_ptr_null(s21_insert(NULL, original, 3));
+    ck_assert_ptr_null(s21_insert("oooo", NULL, 3));
+    ck_assert_ptr_null(s21_insert(NULL, original, 3));
+} END_TEST
+#endif
+
+#if 0
+START_TEST(TRIM) {
+    {
+        const char * original = "...[ BRUH ]XXX";
+        const char * modified = "BRUH";
+
+        const char charset[] = { '.', '[', ' ', 'X' };
+
+        ck_assert_str_eq(s21_trim(original, charset), modified);
+    }
+
+    {
+        const char * original = "............";
+        const char * modified = "";
+
+        const char charset[] = { '.' };
+
+        ck_assert_str_eq(s21_trim(original, charset), modified);
+    }
+
+    ck_assert_ptr_null(s21_trim(NULL, charset));
+    ck_assert_ptr_null(s21_trim(original, NULL));
+} END_TEST
+#endif
+
 static const TTest **test[] = {
     &STRERROR,
 };
