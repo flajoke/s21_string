@@ -4,16 +4,23 @@
 
 #include "s21_string.h"
 
-#define TESTS_COUNT 2
+#define TESTS_COUNT 3
 
-#define CHECK(func) ck_assert(s21_##func == func) 
+#define CHECK(func) do { \
+    TYPE std = func;  \
+    TYPE s21 = s21_##func; \
+    ck_assert_msg(std == s21,  \
+    "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: "FTYPE"[0m\n\t[31m s21: "FTYPE"[0m\n]", #func, std, s21);  \
+    } while (0)
 
 enum test_specific_value {
     SIZE = 24,
     HALF = SIZE / 2,
 };
 
-#if 0
+#if 1
+#define FTYPE "%p"
+#define TYPE void *
 START_TEST(MEMCHR) {
     const char haystack[SIZE] = "........o...........x..\n";
 
@@ -22,9 +29,13 @@ START_TEST(MEMCHR) {
     CHECK(memchr(haystack, 'x', SIZE / 2));
     CHECK(memchr(haystack, 'x', SIZE));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%d"
+#define TYPE int
 START_TEST(MEMCMP)
 {
     const char string[SIZE] = "............ooooooooooo\0";
@@ -39,9 +50,13 @@ START_TEST(MEMCMP)
 
     CHECK(memcmp(string, string, 0));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%p"
+#define TYPE void *
 START_TEST(MEMCPY)
 {
     {
@@ -82,9 +97,13 @@ START_TEST(MEMCPY)
     }
 
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%p"
+#define TYPE void *
 START_TEST(MEMMOVE)
 {
     {
@@ -124,9 +143,13 @@ START_TEST(MEMMOVE)
         ck_assert_mem_eq(std, s21, SIZE);
     }
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%p"
+#define TYPE void *
 START_TEST(MEMSET)
 {
     char s21[SIZE] = ".......................\0";
@@ -141,9 +164,13 @@ START_TEST(MEMSET)
     char src[SIZE] = ".......................\0";
     CHECK(memset(src, 'o', SIZE));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRCAT)
 {
     char dest[HALF] = "......\0";
@@ -180,9 +207,13 @@ START_TEST(STRCAT)
         ck_assert_str_eq(s21, std);
     }
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRNCAT)
 {
     char dest[HALF + 1] = "......\0";
@@ -219,9 +250,13 @@ START_TEST(STRNCAT)
         ck_assert_str_eq(s21, std);
     }
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRCHR)
 {
     const char haystack[HALF] = "..o....o....\0";
@@ -230,9 +265,13 @@ START_TEST(STRCHR)
     CHECK(strchr(haystack, 'x'));
     CHECK(strchr(haystack, '\0'));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%d"
+#define TYPE int
 START_TEST(STRCMP)
 {
     const char string[SIZE] = "............ooooooooooo\0";
@@ -244,6 +283,8 @@ START_TEST(STRCMP)
 #endif
 
 #if 0
+#define FTYPE "%d"
+#define TYPE int
 START_TEST(STRNCMP)
 {
     const char string[SIZE] = "............ooooooooooo\0";
@@ -258,9 +299,13 @@ START_TEST(STRNCMP)
 
     CHECK(strncmp(string, string, 0));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 1
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRCPY)
 {
     {
@@ -278,9 +323,13 @@ START_TEST(STRCPY)
         CHECK(strcpy(dest, src));
     }
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRNCPY)
 {
     {
@@ -335,9 +384,13 @@ START_TEST(STRNCPY)
     }
 
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%ld"
+#define TYPE size_t
 START_TEST(STRCSPN)
 {
     char string[SIZE] = ".....a...o.............\0";
@@ -347,9 +400,13 @@ START_TEST(STRCSPN)
 
     CHECK(strcspn(string, "ao"));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%ld"
+#define TYPE size_t
 START_TEST(STRLEN)
 {
     char string[SIZE] = ".......................\0";
@@ -359,6 +416,8 @@ START_TEST(STRLEN)
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRPBRK)
 {
     char string[SIZE] = ".......o...a...........\0";
@@ -372,6 +431,8 @@ START_TEST(STRPBRK)
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRRCHR)
 {
     const char haystack[HALF] = "..o....o...\0";
@@ -380,9 +441,13 @@ START_TEST(STRRCHR)
     CHECK(strrchr(haystack, 'x'));
     CHECK(strrchr(haystack, '\0'));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%ld"
+#define TYPE size_t
 START_TEST(STRSPN)
 {
     char string[SIZE] = ".....a...o.............\0";
@@ -392,9 +457,13 @@ START_TEST(STRSPN)
 
     CHECK(strcspn(string, ".a"));
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRSTR)
 {
     char string[SIZE] = ".......oooo..oooo...ooo\0";
@@ -409,6 +478,8 @@ START_TEST(STRSTR)
 #endif
 
 #if 0
+#define FTYPE "%s"
+#define TYPE char *
 START_TEST(STRTOK)
 {
     char string[SIZE] = "token.token.token\0";
@@ -420,6 +491,8 @@ START_TEST(STRTOK)
     CHECK(strtok("token.token.token", "."));
 
 } END_TEST
+#undef FTYPE
+#undef TYPE
 #endif
 
 #if 1
@@ -523,7 +596,7 @@ START_TEST(TRIM) {
 #endif
 
 static const TTest **test[] = {
-    &STRERROR, &STRCPY,
+    &STRERROR, &STRCPY, &MEMCHR,
 };
 
 Suite *setup_suite(void) {
