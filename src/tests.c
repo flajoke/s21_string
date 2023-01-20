@@ -6,7 +6,6 @@
 
 #define TESTS_COUNT 4
 
-
 #if 0
     #undef _ck_assert_mem
     #define _ck_assert_mem(X, OP, Y, L) do { \
@@ -55,11 +54,6 @@
         "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", #X, _ck_x_str, _ck_y_str); \
     } while (0)
 #endif
-
-
-
-
-
 
 #undef _ck_assert_str
 #define _ck_assert_str(X, OP, Y, NULLEQ, NULLNE) do { \
@@ -121,7 +115,7 @@ enum test_specific_value {
 #define FTYPE "%p"
 #define TYPE void *
 START_TEST(MEMCHR) {
-    const char haystack[SIZE] = "........o...........x..\n";
+    const char haystack[SIZE] = "........o...........x..";
 
     CHECK(memchr(haystack, 'o', HALF));
 
@@ -137,8 +131,8 @@ START_TEST(MEMCHR) {
 #define TYPE int
 START_TEST(MEMCMP)
 {
-    const char string[SIZE] = "............ooooooooooo\0";
-    const char  other[SIZE] = "............ooooooooooo\0";
+    const char string[SIZE] = "............oooooooooooo";
+    const char  other[SIZE] = "............oooooooooooo";
 
     CHECK(memcmp(string, string, HALF));
     CHECK(memcmp(string, &string[HALF - 1], HALF));
@@ -159,23 +153,23 @@ START_TEST(MEMCMP)
 START_TEST(MEMCPY)
 {
     {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+        char  src[SIZE] = "oooooooooooooooooooooooo";
+        char dest[SIZE] = "........................";
 
         s21_memcpy(dest, src, SIZE);
         ck_assert_mem_eq(dest, src, SIZE);
     }
      
     {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+        char  src[SIZE] = "oooooooooooooooooooooooo";
+        char dest[SIZE] = "........................";
 
         CHECK(memcpy(dest, src, SIZE));
     }
 
     {
-        char  s21[SIZE] = ".oooooooooooooooooooooo\0";
-        char  std[SIZE] = ".oooooooooooooooooooooo\0";
+        char  s21[SIZE] = ".ooooooooooooooooooooooo";
+        char  std[SIZE] = ".ooooooooooooooooooooooo";
 
         s21_memcpy(s21 + 1, s21, SIZE - 1);
         memcpy(std + 1, std, SIZE - 1);
@@ -185,8 +179,8 @@ START_TEST(MEMCPY)
     }
 
     {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
+        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
 
         s21_memcpy(s21, s21 + 1, SIZE - 1);
         memcpy(std, std + 1, SIZE - 1);
@@ -206,23 +200,23 @@ START_TEST(MEMCPY)
 START_TEST(MEMMOVE)
 {
     {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+        char  src[SIZE] = "oooooooooooooooooooooooo";
+        char dest[SIZE] = "........................";
 
         s21_memmove(dest, src, SIZE);
         ck_assert_mem_eq(dest, src, SIZE);
     }
      
     {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+        char  src[SIZE] = "oooooooooooooooooooooooo";
+        char dest[SIZE] = "........................";
 
         CHECK(memmove(dest, src, SIZE));
     }
 
     {
-        char  s21[SIZE] = ".oooooooooooooooooooooo\0";
-        char  std[SIZE] = ".oooooooooooooooooooooo\0";
+        char  s21[SIZE] = ".ooooooooooooooooooooooo";
+        char  std[SIZE] = ".ooooooooooooooooooooooo";
 
         s21_memmove(s21 + 1, s21, SIZE - 1);
         memmove(std + 1, std, SIZE - 1);
@@ -232,8 +226,8 @@ START_TEST(MEMMOVE)
     }
 
     {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
+        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
 
         s21_memmove(s21, s21 + 1, SIZE - 1);
         memmove(std, std + 1, SIZE - 1);
@@ -251,8 +245,8 @@ START_TEST(MEMMOVE)
 #define TYPE void *
 START_TEST(MEMSET)
 {
-    char s21[SIZE] = ".......................\0";
-    char std[SIZE] = ".......................\0";
+    char s21[SIZE] = "........................";
+    char std[SIZE] = "........................";
 
 
     s21_memset(s21, 'o', SIZE);
@@ -260,7 +254,7 @@ START_TEST(MEMSET)
 
     ck_assert_mem_eq(s21, std, SIZE);
 
-    char src[SIZE] = ".......................\0";
+    char src[SIZE] = "........................";
     CHECK(memset(src, 'o', SIZE));
 } END_TEST
 #undef FTYPE
@@ -468,7 +462,7 @@ START_TEST(STRNCPY)
 
 
         // NOTE(pottluci): "..ooooooooooooooooooo???" 
-        ck_assert_mem_eq(strncpy(&std[1], &std[0], SIZE - 1), s21_strncpy(s21 + 1, s21, SIZE - 1), SIZE);
+        ck_assert_mem_eq(strncpy(&std[1], &std[0], SIZE - 1) - 1, s21_strncpy(s21 + 1, s21, SIZE - 1) - 1, SIZE);
     }
 
     {
