@@ -4,99 +4,114 @@
 
 #include "s21_string.h"
 
-#define TESTS_COUNT 4
+#define TESTS_COUNT 8
 
 #if 0
-    #undef _ck_assert_mem
-    #define _ck_assert_mem(X, OP, Y, L) do { \
-      const uint8_t* _ck_x = (const uint8_t*)(X); \
-      const uint8_t* _ck_y = (const uint8_t*)(Y); \
-      size_t _ck_l = (L); \
-      char _ck_x_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
-      char _ck_y_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
-      static const char _ck_hexdigits[] = "0123456789abcdef"; \
-      size_t _ck_i; \
-      size_t _ck_maxl = (_ck_l > CK_MAX_ASSERT_MEM_PRINT_SIZE) ? CK_MAX_ASSERT_MEM_PRINT_SIZE : _ck_l; \
-      for (_ck_i = 0; _ck_i < _ck_maxl; _ck_i++) { \
-        _ck_x_str[_ck_i * 2  ]   = _ck_hexdigits[(_ck_x[_ck_i] >> 4) & 0xF]; \
-        _ck_y_str[_ck_i * 2  ]   = _ck_hexdigits[(_ck_y[_ck_i] >> 4) & 0xF]; \
-        _ck_x_str[_ck_i * 2 + 1] = _ck_hexdigits[_ck_x[_ck_i] & 0xF]; \
-        _ck_y_str[_ck_i * 2 + 1] = _ck_hexdigits[_ck_y[_ck_i] & 0xF]; \
-      } \
-      _ck_x_str[_ck_i * 2] = 0; \
-      _ck_y_str[_ck_i * 2] = 0; \
-      if (_ck_maxl != _ck_l) { \
-        _ck_x_str[_ck_i * 2 - 2] = '.'; \
-        _ck_y_str[_ck_i * 2 - 2] = '.'; \
-        _ck_x_str[_ck_i * 2 - 1] = '.'; \
-        _ck_y_str[_ck_i * 2 - 1] = '.'; \
-      } \
-      ck_assert_msg(0 OP memcmp(_ck_y, _ck_x, _ck_l), \
-        "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", #X, _ck_x_str, _ck_y_str); \
-    } while (0)
+#undef _ck_assert_mem
+#define _ck_assert_mem(X, OP, Y, L)                                            \
+  do {                                                                         \
+    const uint8_t* _ck_x = (const uint8_t*)(X);                                \
+    const uint8_t* _ck_y = (const uint8_t*)(Y);                                \
+    size_t _ck_l = (L);                                                        \
+    char _ck_x_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1];                      \
+    char _ck_y_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1];                      \
+    static const char _ck_hexdigits[] = "0123456789abcdef";                    \
+    size_t _ck_i;                                                              \
+    size_t _ck_maxl = (_ck_l > CK_MAX_ASSERT_MEM_PRINT_SIZE)                   \
+                          ? CK_MAX_ASSERT_MEM_PRINT_SIZE                       \
+                          : _ck_l;                                             \
+    for (_ck_i = 0; _ck_i < _ck_maxl; _ck_i++) {                               \
+      _ck_x_str[_ck_i * 2] = _ck_hexdigits[(_ck_x[_ck_i] >> 4) & 0xF];         \
+      _ck_y_str[_ck_i * 2] = _ck_hexdigits[(_ck_y[_ck_i] >> 4) & 0xF];         \
+      _ck_x_str[_ck_i * 2 + 1] = _ck_hexdigits[_ck_x[_ck_i] & 0xF];            \
+      _ck_y_str[_ck_i * 2 + 1] = _ck_hexdigits[_ck_y[_ck_i] & 0xF];            \
+    }                                                                          \
+    _ck_x_str[_ck_i * 2] = 0;                                                  \
+    _ck_y_str[_ck_i * 2] = 0;                                                  \
+    if (_ck_maxl != _ck_l) {                                                   \
+      _ck_x_str[_ck_i * 2 - 2] = '.';                                          \
+      _ck_y_str[_ck_i * 2 - 2] = '.';                                          \
+      _ck_x_str[_ck_i * 2 - 1] = '.';                                          \
+      _ck_y_str[_ck_i * 2 - 1] = '.';                                          \
+    }                                                                          \
+    ck_assert_msg(0 OP memcmp(_ck_y, _ck_x, _ck_l),                            \
+                  "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m "    \
+                  "std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", \
+                  #X, _ck_x_str, _ck_y_str);                                   \
+  } while (0)
 #else
-    #undef _ck_assert_mem
-    #define _ck_assert_mem(X, OP, Y, L) do { \
-      const uint8_t* _ck_x = (const uint8_t*)(X); \
-      const uint8_t* _ck_y = (const uint8_t*)(Y); \
-      size_t _ck_l = (L); \
-      char _ck_x_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
-      char _ck_y_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1]; \
-      size_t _ck_i; \
-      size_t _ck_maxl = (_ck_l > CK_MAX_ASSERT_MEM_PRINT_SIZE) ? CK_MAX_ASSERT_MEM_PRINT_SIZE : _ck_l; \
-      for (_ck_i = 0; _ck_i < _ck_maxl; _ck_i++) { \
-        _ck_x_str[_ck_i] = _ck_x[_ck_i]; \
-        _ck_y_str[_ck_i] = _ck_y[_ck_i]; \
-      } \
-      _ck_x_str[_ck_i] = 0; \
-      _ck_y_str[_ck_i] = 0; \
-      ck_assert_msg(0 OP memcmp(_ck_y, _ck_x, _ck_l), \
-        "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", #X, _ck_x_str, _ck_y_str); \
-    } while (0)
+#undef _ck_assert_mem
+#define _ck_assert_mem(X, OP, Y, L)                                            \
+  do {                                                                         \
+    const uint8_t* _ck_x = (const uint8_t*)(X);                                \
+    const uint8_t* _ck_y = (const uint8_t*)(Y);                                \
+    size_t _ck_l = (L);                                                        \
+    char _ck_x_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1];                      \
+    char _ck_y_str[CK_MAX_ASSERT_MEM_PRINT_SIZE * 2 + 1];                      \
+    size_t _ck_i;                                                              \
+    size_t _ck_maxl = (_ck_l > CK_MAX_ASSERT_MEM_PRINT_SIZE)                   \
+                          ? CK_MAX_ASSERT_MEM_PRINT_SIZE                       \
+                          : _ck_l;                                             \
+    for (_ck_i = 0; _ck_i < _ck_maxl; _ck_i++) {                               \
+      _ck_x_str[_ck_i] = _ck_x[_ck_i];                                         \
+      _ck_y_str[_ck_i] = _ck_y[_ck_i];                                         \
+    }                                                                          \
+    _ck_x_str[_ck_i] = 0;                                                      \
+    _ck_y_str[_ck_i] = 0;                                                      \
+    ck_assert_msg(0 OP memcmp(_ck_y, _ck_x, _ck_l),                            \
+                  "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m "    \
+                  "std: [1;32m\"%s\"[0m\n\t[31m s21: [1;31m\"%s\"[0m\n]", \
+                  #X, _ck_x_str, _ck_y_str);                                   \
+  } while (0)
 #endif
 
 #undef _ck_assert_str
-#define _ck_assert_str(X, OP, Y, NULLEQ, NULLNE) do { \
-  const char* _ck_x = (X); \
-  const char* _ck_y = (Y); \
-  const char* _ck_x_s; \
-  const char* _ck_y_s; \
-  const char* _ck_x_q; \
-  const char* _ck_y_q; \
-  if (_ck_x != NULL) { \
-    _ck_x_q = "\""; \
-    _ck_x_s = _ck_x; \
-  } else { \
-    _ck_x_q = ""; \
-    _ck_x_s = "(null)"; \
-  } \
-  if (_ck_y != NULL) { \
-    _ck_y_q = "\""; \
-    _ck_y_s = _ck_y; \
-  } else { \
-    _ck_y_q = ""; \
-    _ck_y_s = "(null)"; \
-  } \
-  ck_assert_msg( \
-    (NULLEQ && (_ck_x == NULL) && (_ck_y == NULL)) || \
-    (NULLNE && ((_ck_x == NULL) || (_ck_y == NULL)) && (_ck_x != _ck_y)) || \
-    ((_ck_x != NULL) && (_ck_y != NULL) && (0 OP strcmp(_ck_y, _ck_x))), \
-    "[1;33mAssertion [0m [33m'%s'[0m failed:\n[\n\t[32m std: == %s%s%s[0m\n\t[31m s21: == %s%s%s[0m\n]", \
-    #X, \
-    _ck_x_q, _ck_x_s, _ck_x_q, \
-    _ck_y_q, _ck_y_s, _ck_y_q); \
-} while (0)
+#define _ck_assert_str(X, OP, Y, NULLEQ, NULLNE)                             \
+  do {                                                                       \
+    const char* _ck_x = (X);                                                 \
+    const char* _ck_y = (Y);                                                 \
+    const char* _ck_x_s;                                                     \
+    const char* _ck_y_s;                                                     \
+    const char* _ck_x_q;                                                     \
+    const char* _ck_y_q;                                                     \
+    if (_ck_x != NULL) {                                                     \
+      _ck_x_q = "\"";                                                        \
+      _ck_x_s = _ck_x;                                                       \
+    } else {                                                                 \
+      _ck_x_q = "";                                                          \
+      _ck_x_s = "(null)";                                                    \
+    }                                                                        \
+    if (_ck_y != NULL) {                                                     \
+      _ck_y_q = "\"";                                                        \
+      _ck_y_s = _ck_y;                                                       \
+    } else {                                                                 \
+      _ck_y_q = "";                                                          \
+      _ck_y_s = "(null)";                                                    \
+    }                                                                        \
+    ck_assert_msg((NULLEQ && (_ck_x == NULL) && (_ck_y == NULL)) ||          \
+                      (NULLNE && ((_ck_x == NULL) || (_ck_y == NULL)) &&     \
+                       (_ck_x != _ck_y)) ||                                  \
+                      ((_ck_x != NULL) && (_ck_y != NULL) &&                 \
+                       (0 OP strcmp(_ck_y, _ck_x))),                         \
+                  "[1;33mAssertion [0m [33m'%s'[0m failed:\n[\n\t[32m " \
+                  "std: == %s%s%s[0m\n\t[31m s21: == %s%s%s[0m\n]",       \
+                  #X, _ck_x_q, _ck_x_s, _ck_x_q, _ck_y_q, _ck_y_s, _ck_y_q); \
+  } while (0)
 
-#define CHECK(func) do { \
-    TYPE std = func;  \
-    TYPE s21 = s21_##func; \
-    ck_assert_msg(std == s21,  \
-    "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: "FTYPE"[0m\n\t[31m s21: "FTYPE"[0m\n]", #func, std, s21);  \
-    } while (0)
+#define CHECK(func)                                                          \
+  do {                                                                       \
+    TYPE std = func;                                                         \
+    TYPE s21 = s21_##func;                                                   \
+    ck_assert_msg(                                                           \
+        std == s21,                                                          \
+        "[1;33mAssertion[0m [33m'%s'[0m failed:\n[\n\t[32m std: " FTYPE \
+        "[0m\n\t[31m s21: " FTYPE "[0m\n]",                               \
+        #func, std, s21);                                                    \
+  } while (0)
 
 enum test_specific_value {
-    SIZE = 24,
-    HALF = SIZE / 2,
+  SIZE = 24,
+  HALF = SIZE / 2,
 };
 
 /*
@@ -109,161 +124,160 @@ enum test_specific_value {
  *
  *
  *
-*/
+ */
 
 #if 1
 #define FTYPE "%p"
-#define TYPE void *
+#define TYPE void*
 START_TEST(MEMCHR) {
-    const char haystack[SIZE] = "........o...........x..";
+  const char haystack[SIZE] = "........o...........x..";
 
-    CHECK(memchr(haystack, 'o', HALF));
+  CHECK(memchr(haystack, 'o', HALF));
 
-    CHECK(memchr(haystack, 'x', HALF));
-    CHECK(memchr(haystack, 'x', SIZE));
-} END_TEST
+  CHECK(memchr(haystack, 'x', HALF));
+  CHECK(memchr(haystack, 'x', SIZE));
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
 
-#if 0
+#if 1
 #define FTYPE "%d"
 #define TYPE int
-START_TEST(MEMCMP)
-{
-    const char string[SIZE] = "............oooooooooooo";
-    const char  other[SIZE] = "............oooooooooooo";
+START_TEST(MEMCMP) {
+  const char string[SIZE] = "............oooooooooooo";
+  const char other[SIZE] = "............oooooooooooo";
 
-    CHECK(memcmp(string, string, HALF));
-    CHECK(memcmp(string, &string[HALF - 1], HALF));
-    CHECK(memcmp(string, string, SIZE));
+  CHECK(memcmp(string, string, HALF));
+  CHECK(memcmp(string, &string[HALF - 1], HALF));
+  CHECK(memcmp(string, string, SIZE));
 
-    CHECK(memcmp(string, other, HALF));
-    CHECK(memcmp(string, &other[HALF - 1], HALF));
+  CHECK(memcmp(string, other, HALF));
+  CHECK(memcmp(string, &other[HALF - 1], HALF));
 
-    CHECK(memcmp(string, string, 0));
-} END_TEST
+  CHECK(memcmp(string, string, 0));
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
 
-#if 0
+#if 1
 #define FTYPE "%p"
-#define TYPE void *
-START_TEST(MEMCPY)
-{
-    {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+#define TYPE void*
+START_TEST(MEMCPY) {
+  {
+    char src[SIZE] = "oooooooooooooooooooooooo";
+    char dest[SIZE] = "........................";
 
-        s21_memcpy(dest, src, SIZE);
-        ck_assert_mem_eq(dest, src, SIZE);
-    }
-     
-    {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+    s21_memcpy(dest, src, SIZE);
+    ck_assert_mem_eq(dest, src, SIZE);
+  }
 
-        CHECK(memcpy(dest, src, SIZE));
-    }
+  {
+    char src[SIZE] = "oooooooooooooooooooooooo";
+    char dest[SIZE] = "........................";
 
-    {
-        char  s21[SIZE] = ".ooooooooooooooooooooooo";
-        char  std[SIZE] = ".ooooooooooooooooooooooo";
+    CHECK(memcpy(dest, src, SIZE));
+  }
 
-        s21_memcpy(s21 + 1, s21, SIZE - 1);
-        memcpy(std + 1, std, SIZE - 1);
+  {
+    char s21[SIZE] = ".ooooooooooooooooooooooo";
+    char std[SIZE] = ".ooooooooooooooooooooooo";
 
-        // NOTE(pottluci): "..oooooooooooooooooooo???" 
-        ck_assert_mem_eq(std, s21, SIZE);
-    }
+    s21_memcpy(s21 + 1, s21, SIZE - 1);
+    memcpy(std + 1, std, SIZE - 1);
 
-    {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+    // NOTE(pottluci): "..oooooooooooooooooooo???"
+    ck_assert_mem_eq(std, s21, SIZE);
+  }
 
-        s21_memcpy(s21, s21 + 1, SIZE - 1);
-        memcpy(std, std + 1, SIZE - 1);
+  {
+    char s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+    char std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
 
-        // NOTE(pottluci): "xxxxxxxxxxxxxxxxxxxxxxxx" 
-        ck_assert_mem_eq(std, s21, SIZE);
-    }
+    s21_memcpy(s21, s21 + 1, SIZE - 1);
+    memcpy(std, std + 1, SIZE - 1);
 
-} END_TEST
+    // NOTE(pottluci): "xxxxxxxxxxxxxxxxxxxxxxxx"
+    ck_assert_mem_eq(std, s21, SIZE);
+  }
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
 
-#if 0
+#if 1
 #define FTYPE "%p"
-#define TYPE void *
-START_TEST(MEMMOVE)
-{
-    {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+#define TYPE void*
+START_TEST(MEMMOVE) {
+  {
+    char src[SIZE] = "oooooooooooooooooooooooo";
+    char dest[SIZE] = "........................";
 
-        s21_memmove(dest, src, SIZE);
-        ck_assert_mem_eq(dest, src, SIZE);
-    }
-     
-    {
-        char  src[SIZE] = "oooooooooooooooooooooooo";
-        char dest[SIZE] = "........................";
+    s21_memmove(dest, src, SIZE);
+    ck_assert_mem_eq(dest, src, SIZE);
+  }
 
-        CHECK(memmove(dest, src, SIZE));
-    }
+  {
+    char src[SIZE] = "oooooooooooooooooooooooo";
+    char dest[SIZE] = "........................";
 
-    {
-        char  s21[SIZE] = ".ooooooooooooooooooooooo";
-        char  std[SIZE] = ".ooooooooooooooooooooooo";
+    CHECK(memmove(dest, src, SIZE));
+  }
 
-        s21_memmove(s21 + 1, s21, SIZE - 1);
-        memmove(std + 1, std, SIZE - 1);
+  {
+    char s21[SIZE] = ".ooooooooooooooooooooooo";
+    char std[SIZE] = ".ooooooooooooooooooooooo";
 
-        // NOTE(pottluci): ".ooooooooooooooooooooooo" 
-        ck_assert_mem_eq(std, s21, SIZE);
-    }
+    s21_memmove(s21 + 1, s21, SIZE - 1);
+    memmove(std + 1, std, SIZE - 1);
 
-    {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+    // NOTE(pottluci): ".ooooooooooooooooooooooo"
+    ck_assert_mem_eq(std, s21, SIZE);
+  }
 
-        s21_memmove(s21, s21 + 1, SIZE - 1);
-        memmove(std, std + 1, SIZE - 1);
+  {
+    char s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
+    char std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxxx";
 
-        // NOTE(pottluci): ".xxxxxxxxxxxxxxxxxxxxxxx" 
-        ck_assert_mem_eq(std, s21, SIZE);
-    }
-} END_TEST
+    s21_memmove(s21, s21 + 1, SIZE - 1);
+    memmove(std, std + 1, SIZE - 1);
+
+    // NOTE(pottluci): ".xxxxxxxxxxxxxxxxxxxxxxx"
+    ck_assert_mem_eq(std, s21, SIZE);
+  }
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
 
-#if 0
+#if 1
 #define FTYPE "%p"
-#define TYPE void *
-START_TEST(MEMSET)
-{
-    char s21[SIZE] = "........................";
-    char std[SIZE] = "........................";
+#define TYPE void*
+START_TEST(MEMSET) {
+  char s21[SIZE] = "........................";
+  char std[SIZE] = "........................";
 
+  s21_memset(s21, 'o', SIZE);
+  memset(std, 'o', SIZE);
 
-    s21_memset(s21, 'o', SIZE);
-    memset(std, 'o', SIZE);
+  ck_assert_mem_eq(s21, std, SIZE);
 
-    ck_assert_mem_eq(s21, std, SIZE);
-
-    char src[SIZE] = "........................";
-    CHECK(memset(src, 'o', SIZE));
-} END_TEST
+  char src[SIZE] = "........................";
+  CHECK(memset(src, 'o', SIZE));
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRCAT)
 {
     char dest[HALF] = "......\0";
@@ -306,7 +320,7 @@ START_TEST(STRCAT)
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRNCAT)
 {
     char dest[HALF + 1] = "......\0";
@@ -349,7 +363,7 @@ START_TEST(STRNCAT)
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRCHR)
 {
     const char haystack[HALF] = "..o....o....\0";
@@ -398,82 +412,81 @@ START_TEST(STRNCMP)
 
 #if 1
 #define FTYPE "%s"
-#define TYPE char *
-START_TEST(STRCPY)
-{
-    {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+#define TYPE char*
+START_TEST(STRCPY) {
+  {
+    char src[SIZE] = "ooooooooooooooooooooooo\0";
+    char dest[SIZE] = ".......................\0";
 
-        s21_strcpy(dest, src);
-        ck_assert_str_eq(dest, src);
-    }
-     
-    {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+    s21_strcpy(dest, src);
+    ck_assert_str_eq(dest, src);
+  }
 
-        CHECK(strcpy(dest, src));
-    }
-} END_TEST
+  {
+    char src[SIZE] = "ooooooooooooooooooooooo\0";
+    char dest[SIZE] = ".......................\0";
+
+    CHECK(strcpy(dest, src));
+  }
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
 
 #if 1
 #define FTYPE "%s"
-#define TYPE char *
-START_TEST(STRNCPY)
-{
-    {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+#define TYPE char*
+START_TEST(STRNCPY) {
+  {
+    char src[SIZE] = "ooooooooooooooooooooooo\0";
+    char dest[SIZE] = ".......................\0";
 
-        s21_strncpy(dest, src, SIZE);
-        ck_assert_str_eq(dest, src);
+    s21_strncpy(dest, src, SIZE);
+    ck_assert_str_eq(dest, src);
+  }
 
-    }
-     
-    {
-        char  src[SIZE] = "ooooooooooooooooooooooo\0";
-        char dest[SIZE] = ".......................\0";
+  {
+    char src[SIZE] = "ooooooooooooooooooooooo\0";
+    char dest[SIZE] = ".......................\0";
 
-        CHECK(strncpy(dest, src, SIZE));
-    }
+    CHECK(strncpy(dest, src, SIZE));
+  }
 
-    {
-        char  s21[SIZE] = ".......................\0";
-        char  std[SIZE] = ".......................\0";
+  {
+    char s21[SIZE] = ".......................\0";
+    char std[SIZE] = ".......................\0";
 
-        char  src[4] = {'o','o','o','o'};
+    char src[4] = {'o', 'o', 'o', 'o'};
 
-        const size_t offset = (SIZE - sizeof(src)); 
-        const size_t slice_size = sizeof(src);
+    const size_t offset = (SIZE - sizeof(src));
+    const size_t slice_size = sizeof(src);
 
-        s21_strncpy(&s21[offset], src, slice_size);
-        strncpy(&std[offset], src, slice_size);
+    s21_strncpy(&s21[offset], src, slice_size);
+    strncpy(&std[offset], src, slice_size);
 
-        ck_assert_mem_eq(std, s21, SIZE);
-    }
+    ck_assert_mem_eq(std, s21, SIZE);
+  }
 
-    {
-        char  s21[SIZE] = ".oooooooooooooooooooooo\0";
-        char  std[SIZE] = ".oooooooooooooooooooooo\0";
+  {
+    char s21[SIZE] = ".oooooooooooooooooooooo\0";
+    char std[SIZE] = ".oooooooooooooooooooooo\0";
 
+    // NOTE(pottluci): "..ooooooooooooooooooo???"
+    ck_assert_mem_eq(strncpy(&std[1], &std[0], SIZE - 1) - 1,
+                     s21_strncpy(s21 + 1, s21, SIZE - 1) - 1, SIZE);
+  }
 
-        // NOTE(pottluci): "..ooooooooooooooooooo???" 
-        ck_assert_mem_eq(strncpy(&std[1], &std[0], SIZE - 1) - 1, s21_strncpy(s21 + 1, s21, SIZE - 1) - 1, SIZE);
-    }
+  {
+    char s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
+    char std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
 
-    {
-        char  s21[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
-        char  std[SIZE] = ".xxxxxxxxxxxxxxxxxxxxxx\0";
-
-        // NOTE(pottluci): "xxxxxxxxxxxxxxxxxxxxxxxx" 
-        ck_assert_mem_eq(strncpy(&std[0], &std[1], SIZE - 1), s21_strncpy(&s21[0], &s21[1], SIZE - 1), SIZE);
-    }
-
-} END_TEST
+    // NOTE(pottluci): "xxxxxxxxxxxxxxxxxxxxxxxx"
+    ck_assert_mem_eq(strncpy(&std[0], &std[1], SIZE - 1),
+                     s21_strncpy(&s21[0], &s21[1], SIZE - 1), SIZE);
+  }
+}
+END_TEST
 #undef FTYPE
 #undef TYPE
 #endif
@@ -507,7 +520,7 @@ START_TEST(STRLEN)
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRPBRK)
 {
     char string[SIZE] = ".......o...a...........\0";
@@ -522,7 +535,7 @@ START_TEST(STRPBRK)
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRRCHR)
 {
     const char haystack[HALF] = "..o....o...\0";
@@ -553,7 +566,7 @@ START_TEST(STRSPN)
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRSTR)
 {
     char string[SIZE] = ".......oooo..oooo...ooo\0";
@@ -569,7 +582,7 @@ START_TEST(STRSTR)
 
 #if 0
 #define FTYPE "%s"
-#define TYPE char *
+#define TYPE char*
 START_TEST(STRTOK)
 {
     char string[SIZE] = "token.token.token\0";
@@ -587,16 +600,14 @@ START_TEST(STRTOK)
 
 #if 1
 START_TEST(STRERROR) {
-    for (int error = 0; error < 256; ++error)
-    {
-        ck_assert_str_eq(s21_strerror(error), strerror(error));
-    }
-    for (int error = 0; error > -256; --error)
-    {
-        ck_assert_str_eq(s21_strerror(error), strerror(error));
-    }
-
-} END_TEST
+  for (int error = 0; error < 256; ++error) {
+    ck_assert_str_eq(s21_strerror(error), strerror(error));
+  }
+  for (int error = 0; error > -256; --error) {
+    ck_assert_str_eq(s21_strerror(error), strerror(error));
+  }
+}
+END_TEST
 #endif
 
 #if 0
@@ -685,35 +696,35 @@ START_TEST(TRIM) {
 } END_TEST
 #endif
 
-static const TTest **test[] = {
-    &STRERROR, &STRCPY, &STRNCPY, &MEMCHR,
+static const TTest** test[] = {
+    &STRERROR, &STRCPY, &STRNCPY, &MEMCPY, &MEMSET, &MEMMOVE, &MEMCMP, &MEMCHR,
 };
 
-Suite *setup_suite(void) {
-    Suite *suite = suite_create("s21_string");
-    TCase *core  = tcase_create("Core");
+Suite* setup_suite(void) {
+  Suite* suite = suite_create("s21_string");
+  TCase* core = tcase_create("Core");
 
-    for (int i = 0; i < TESTS_COUNT; ++i) {
-        tcase_add_test(core, *test[i]);
-    }
+  for (int i = 0; i < TESTS_COUNT; ++i) {
+    tcase_add_test(core, *test[i]);
+  }
 
-    suite_add_tcase(suite, core);
+  suite_add_tcase(suite, core);
 
-    return suite;
+  return suite;
 }
 
 int main(void) {
-    Suite *suite = setup_suite();
-    SRunner *runner = srunner_create(suite); 
+  Suite* suite = setup_suite();
+  SRunner* runner = srunner_create(suite);
 
-    // NOTE(pottluci): "-" outputs to stdout.
-    //                       v
-    srunner_set_tap(runner, "-"); 
+  // NOTE(pottluci): "-" outputs to stdout.
+  //                       v
+  srunner_set_tap(runner, "-");
 
-    srunner_run_all(runner, CK_MINIMAL);
-    srunner_ntests_failed(runner);
+  srunner_run_all(runner, CK_MINIMAL);
+  srunner_ntests_failed(runner);
 
-    srunner_free(runner);
+  srunner_free(runner);
 
-    return 0;
+  return 0;
 }

@@ -18,7 +18,7 @@ CFLAGS = -Wall -g
 LIB_TOOL = ar
 LIB_FLAGS = -rcs
 
-SRC = strerror.c s21_strcpy.c s21_memchr.c s21_strncpy.c
+SRC = strerror.c s21_strcpy.c s21_memchr.c s21_strncpy.c s21_memcpy.c s21_memmove.c s21_memcmp.c s21_memset.c
 OBJ = $(SRC:%.c=%.o)
 
 CC = gcc
@@ -40,7 +40,7 @@ PATH:=$(PATH):$(BREW)/bin
 TEST = check_test
 TEST_SRC = tests.c
 TEST_OJB = $(TEST_SRC:%.c=%.o)
-TEST_LIBS =-lcheck -lm -lpthread -lrt -lsubunit 
+TEST_LIBS =-lcheck -lm -lpthread
 
 # --------{COLORED OUTPUT}------------------------------------
 
