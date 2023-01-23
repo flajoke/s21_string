@@ -11,7 +11,7 @@ char *s21_strchr(const char *str, int c) {
 		res = str;
 		break;
             }
-	    *str++;
+	    str++;
 	}
     }	
     return (char *)res;

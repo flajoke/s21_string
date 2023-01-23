@@ -10,7 +10,7 @@ char *s21_strrchr(const char *str, int c) {
             if (*str == (char)c) {
                 res = str;
             }
-	    *str++;
+	    str++;
         }
     }
     return (char *)res;
