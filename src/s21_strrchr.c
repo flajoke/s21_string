@@ -6,12 +6,12 @@
 char *s21_strrchr(const char *str, int c) {
     const char *res = NULL;
     if (str != NULL) {
-        while(*(str - 1) != '\0') {
+        do {
             if (*str == (char)c) {
                 res = str;
             }
 	    str++;
-        }
+        } while(str[-1] != '\0');
     }
     return (char *)res;
 }
