@@ -6,7 +6,7 @@
 char *s21_strrchr(const char *str, int c) {
     const char *res = NULL;
     if (str != NULL) {
-        while(*str != '\0') {
+        while(*(str - 1) != '\0') {
             if (*str == (char)c) {
                 res = str;
             }
