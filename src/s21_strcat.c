@@ -3,7 +3,7 @@
 // Добавляет строку, на которую указывает src, в конец строки, 
 // на которую указывает dest. 
 
-char* strcat(char* dest, const char* src) {
+char* s21_strcat(char* dest, const char* src) {
     int i, j;
 
     for (i = 0; dest[i] != '\0'; i++);
