@@ -3,14 +3,15 @@
 // Добавляет строку, на которую указывает src, в конец строки, 
 // на которую указывает dest, длиной до n символов.
 
-char *s21_strncat(char *dest, const char *src, size_t n) {
-    char *tmp = dest + s21_strlen(dest);
+char* strncat(char* dest, const char* src, size_t n) {
+    int i, j;
 
-    while (*src != '\0' && n--) {
-        *tmp++ = *src++;
-    }
+    for (i = 0; dest[i] != '\0'; i++);
 
-    *tmp = '\0';
+    for (j = 0; j < n && src[j] != '\0'; j++)
+        dest[i + j] = src[j];
+
+    dest[i + j] = '\0';
 
     return dest;
 }
