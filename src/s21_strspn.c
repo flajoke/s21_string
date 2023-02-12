@@ -1,4 +1,4 @@
-#include "stre.h"
+#include "s21_string.h"
 
 size_t s21_strspn(const char *s, const char *charset) {
   size_t count = 0;

@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "s21_string.h"
 
 void *s21_memset(void *b, int c, size_t len) {
   for (int i = 0; i < len; i++) {

@@ -1,6 +1,6 @@
-#include "stre.h"
+#include "s21_string.h"
 
-size_t s21_strcspn(const char *s, const char *charset) {
+char *s21_strpbrk(const char *s, const char *charset) {
   size_t i;
   char match = 0;
   for (i = 0; s[i] != '\0'; i++) {
@@ -14,5 +14,5 @@ size_t s21_strcspn(const char *s, const char *charset) {
       break;
     }
   }
-  return i;
+  return (char *)(s + i);
 }

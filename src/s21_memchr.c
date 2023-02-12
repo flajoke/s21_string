@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "s21_string.h"
 
 void *s21_memchr(const void *str, int pattern, size_t count) {
   size_t result = -1;

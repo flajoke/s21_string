@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "s21_string.h"
 
 void *s21_memcpy(void *restrict dst, const void *restrict src, size_t n) {
   signed long int diff = dst - src;
