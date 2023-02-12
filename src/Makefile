@@ -1,108 +1,111 @@
-# REQUIRES: 
-#  - check library (c unit tests)
-#  - docker
-#  - gcov + lcov
-#  - gcc
+CC=gcc
 
-RED    = \033[0;31m
-GREEN  = \033[0;32m
-YELLOW = \033[0;33m
-CYAN   = \033[0;36m
-RESET  = \033[0m
+TARGET?=s21_string.a
+TEST_TARGET?=test_s21_string.a
+TEST_EXE?=test
+TEST_GCOV_EXE?=test_gcov
+GCOV_TARGET=./coverage
+GCOV_INFO=coverage.info
 
-TARGET = s21_string
-TARGET_LIB = s21_string.a
+SRC_DIR?=.
+TEST_SRC_DIR?=./tests
 
-CFLAGS = -Wall -g
+OBJ_DIR?=./objs
+TEST_OBJ_DIR?=./tests/objs
 
-LIB_TOOL = ar
-LIB_FLAGS = -rcs
+INC_DIR:=./
+TEST_INC_DIR:=./tests_includes
 
-SRC = strerror.c s21_strcpy.c s21_memchr.c s21_strncpy.c
-OBJ = $(SRC:%.c=%.o)
+INC:=$(shell find $(INC_DIR) -name "*.h")
+SRC:=$(shell find $(SRC_DIR) -name "s21_*.c")
 
-CC = gcc
-RM = rm
+TEST_INC:=$(shell find $(TEST_INC_DIR) -name "*.h")
+TEST_SRC:=$(shell find $(TEST_SRC_DIR) -name "*.c")
 
-SYSTEM=$(shell uname -s)
+OBJS:=$(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.c=.o)))
+GCOV_OBJS:=$(addprefix $(TEST_OBJ_DIR)/, $(notdir $(SRC:.c=.o)))
+TEST_OBJS:=$(addprefix $(TEST_OBJ_DIR)/, $(notdir $(TEST_SRC:.c=.o))) # $(TEST_OBJ_DIR)/main.o
 
-ifeq ($(SYSTEM),Linux)
-	OPEN_CMD=xdg-open
-	BREW=.
-endif
-ifeq ($(SYSTEM),Darwin)
-	OPEN_CMD=open
-	BREW:=$(HOME)/goinfre/homebrew
-endif
+GCDA=$(shell find $(TEST_OBJ_DIR) -name "*.gcda")
+GCNO=$(shell find $(TEST_OBJ_DIR) -name "*.gcno")
 
-PATH:=$(PATH):$(BREW)/bin
+AR:= ar rc
+RAN:= ranlib
+RM:= rm -f
+MK:=mkdir -p
 
-TEST = check_test
-TEST_SRC = tests.c
-TEST_OJB = $(TEST_SRC:%.c=%.o)
-TEST_LIBS =-lcheck -lm -lpthread -lrt -lsubunit 
+ASAN:=#-fsanitize=address
+STDFLAGS=-c -Wall -Wextra -Werror -std=c11
+CFLAGS?= $(STDFLAGS) $(ASAN)
+TST_CFLAGS:= -g $(STDFLAGS) #$(shell pkg-config --cflags check)
+GCOV_FLAGS?=-fprofile-arcs -ftest-coverage
+TST_LIBS?=$(shell pkg-config --cflags --libs check) -lm
 
-# --------{COLORED OUTPUT}------------------------------------
+all: test  s21_string.a gcov_report
 
-define printout
-	@echo 
-	@echo "${1}$(2)${3}"
-	@echo 
-endef
+gcov_obj: $(GCOV_OBJ)
 
-# ------------------------------------------------------------
+$(TARGET): $(OBJS)
+	$(AR) $(TARGET) $(OBJS)
+	$(RAN) $(TARGET)
 
-%.o: %.c
-	@printf "${YELLOW} • "
-	$(CC) -c $(CFLAGS) $< -o $@
-	@printf "${RESET}"
+$(TEST_TARGET): $(GCOV_OBJS) $(INC)
+	$(AR) $(TEST_TARGET) $(GCOV_OBJS)
+	$(RAN) $(TEST_TARGET)
 
-all: $(TARGET_LIB)
+test: $(TARGET) $(TEST_OBJ_DIR)/main.o $(TEST_OBJS) $(TEST_INC) 
+	$(CC) $(TEST_OBJS) $(TEST_OBJ_DIR)/main.o $(ASAN) $(GCOV_FLAGS) -o $(TEST_EXE) $(TST_LIBS) -L. $(TARGET)
 
-$(TARGET_LIB): $(OBJ)
-	$(call printout, $(GREEN), "$(TARGET):", $(RESET))
-	$(LIB_TOOL) $(LIB_FLAGS) $@ $^ 
-	$(call printout, $(GREEN), "$(TARGET):", $(CYAN))
-	@$(LIB_TOOL) -t $(TARGET_LIB) | sed -e 's/^/ • /'
-	$(call printout, $(GREEN), "Done!", $(RESET))
+test_gcov: $(TEST_TARGET) $(TEST_OBJ_DIR)/main.o $(TEST_OBJS) 
+	$(CC) $(TEST_OBJS) $(TEST_OBJ_DIR)/main.o $(GCOV_FLAGS) -o $(TEST_GCOV_EXE) $(TST_LIBS) -L. $(TEST_TARGET)
+
+$(TEST_OBJ_DIR)/main.o: main.c 
+	@$(MK) $(TEST_OBJ_DIR)
+	$(CC) $(CFLAGS) -o $(TEST_OBJ_DIR)/main.o main.c  
+
+$(TEST_OBJ_DIR)%.o: $(TEST_SRC_DIR)%.c $(TEST_INC) 
+	@$(MK) $(TEST_OBJ_DIR)
+	$(CC) $(TST_CFLAGS) -o $@ -c $<
+
+$(OBJS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(INC) 
+	@$(MK) $(OBJ_DIR)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(GCOV_OBJS): $(TEST_OBJ_DIR)%.o: $(SRC_DIR)%.c $(TEST_INC)
+	@$(MK) $(TEST_OBJ_DIR)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+gcov_report: $(GCOV_TARGET)
+
+$(GCOV_TARGET): CFLAGS += $(GCOV_FLAGS)
+$(GCOV_TARGET): $(GCOV_INFO)
+	genhtml $(GCOV_INFO) -o $(GCOV_TARGET)
+
+$(GCOV_INFO): test_gcov
+	./$(TEST_GCOV_EXE)
+	geninfo $(TEST_OBJ_DIR) -b . -o ./$(GCOV_INFO)
+
+
+open:
+	open coverage/src/index.html
 
 clean:
-	$(call printout, $(GREEN), "Cleaning up:", $(RED))
-	- $(RM) -f $(TARGET) $(TEST)
-	- $(RM) -rf ./report/
-	- $(RM) -rf *.dSYM
-	- $(RM) -f *.info
-	- $(RM) -f *.gcov 
-	- $(RM) -f *.gcno 
-	- $(RM) -f *.gcda 
-	- $(RM) -f *.out
-	- $(RM) -f *.o
-	- $(RM) -f *.a
-	$(call printout, $(GREEN), "Done!", $(RESET))
+	$(RM) $(OBJS)
+	$(RM) $(GCDA)
+	$(RM) $(GCNO)
+	$(RM) $(TEST_OBJS)
+	$(RM) $(GCOV_OBJS)
+	$(RM) tests/objs/main.o
 
-rebuild: clean all
+fclean: clean
+	$(RM) $(TARGET)
+	$(RM) $(TEST_TARGET)
+	$(RM) $(TEST_EXE)
+	$(RM) $(TEST_GCOV_EXE)
+	$(RM) $(GCOV_INFO)
+	$(RM) -r $(GCOV_TARGET)
+	$(RM) tests/objs/main.o
 
-test: $(TARGET_LIB)
-	$(call printout, $(GREEN), "Compiling unit tests:", $(RESET))
-	$(CC) -o $(TEST) $(CFLAGS) $(TEST_SRC) $^ $(TEST_LIBS)
-	$(call printout, $(GREEN), "Done!", $(RESET))
-	-@./$(TEST)
+re: fclean all
 
-gcov_report: CFLAGS:=--coverage $(CFLAGS)
-gcov_report: clean lcov test
-	$(call printout, $(GREEN), "Generating .info coverage:", $(CYAN))
-	#-@$(RM) -f $(TEST_SRC:.c=.gcda)
-	@$(shell PATH=$(PATH) which lcov) -t "$(TARGET)" -o $(TARGET).info -c -d .
-	$(call printout, $(GREEN), "Done!", $(RED))
-	$(call printout, $(GREEN), "Generating html report:", $(CYAN))
-	-mkdir report
-	@$(shell PATH=$(PATH) which genhtml)  -o report $(TARGET).info
-	#$(OPEN_CMD) ./report/index.html
-	$(call printout, $(GREEN), "Done!", $(RESET))
-
-lcov:
-ifeq ("", "$(shell PATH=$(PATH) which lcov)")
-	$(error Need to install lcov)
-endif
-
-.PHONY: setup all clean rebuild test gcov_report lcov
+.PHONY: all clean fclean re open 

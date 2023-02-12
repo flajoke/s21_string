@@ -2,8 +2,13 @@
 
 size_t s21_strlen(const char *str) {
     size_t len = 0;
-    while (str[len] != '\0') {
-        len++;
+
+    if (str) {
+        for (int i = 0; str[i]; i++) {
+            len++;
+        }
     }
+
     return len;
 }
+

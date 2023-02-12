@@ -4,7 +4,7 @@
 // на которую указывает dest. 
 
 char* s21_strcat(char* dest, const char* src) {
-    int i, j;
+    size_t i, j;
 
     for (i = 0; dest[i] != '\0'; i++);
 

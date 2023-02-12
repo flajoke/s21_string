@@ -1,4 +1,4 @@
-#include "string.h"
+#include "s21_string.h"
 
 void *s21_to_upper(const char *str) {
     char *str_copy = NULL;
@@ -22,3 +22,5 @@ void *s21_to_upper(const char *str) {
 
     return str_copy;
 }
+
+

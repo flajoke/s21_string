@@ -8,10 +8,12 @@ size_t s21_strspn(const char *s, const char *charset) {
       if (s[i] == charset[j]) {
         match = 1;
       }
-      if (match) {
-        count++;
-        match = 0;
-      }
+    }
+    if (match) {
+      count++;
+      match = 0;
+    } else {
+      break;
     }
   }
   return count;
